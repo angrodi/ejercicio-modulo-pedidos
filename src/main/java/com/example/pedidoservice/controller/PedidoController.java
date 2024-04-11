@@ -10,7 +10,6 @@ import com.example.pedidoservice.model.entity.Pedido;
 import com.example.pedidoservice.service.PedidoService;
 import com.example.pedidoservice.utils.PedidoUtils;
 import jakarta.validation.Valid;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +29,10 @@ public class PedidoController {
             produces = "application/json"
     )
     public ResponseEntity<PedidoDto> crearPedido(@Valid @RequestBody PedidoCreateDto body) {
+        if (body.getItems().isEmpty()) {
+            throw new InvalidInputException("El pedido no tiene productos");
+        }
+
         Pedido pedido = this.pedidoService.crearPedido(body);
         PedidoDto data = this.pedidoMapper.pedidoToPedidoDto(pedido);
 
