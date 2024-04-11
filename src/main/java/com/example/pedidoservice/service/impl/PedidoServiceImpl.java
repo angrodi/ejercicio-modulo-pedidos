@@ -11,6 +11,7 @@ import com.example.pedidoservice.utils.EstadoPedidoEnum;
 import com.example.pedidoservice.utils.PedidoUtils;
 import lombok.Data;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -201,7 +202,7 @@ public class PedidoServiceImpl implements PedidoService {
                                 .forEach(pEvaluacion -> {
                                     if ( Objects.equals(pEvaluacion.getUsuario().getId(), usuario.getId()) ) {
                                         pEvaluacion.setFechaEvaluacion(LocalDateTime.now());
-                                        pEvaluacion.setResultado(evaluacion.getResultado());
+                                        pEvaluacion.setResultado(StringUtils.capitalize(evaluacion.getResultado()));
                                         pEvaluacion.setComentarios(evaluacion.getComentarios());
                                     } else {
                                         pEvaluacion.setResultado("Sin Respuesta");
@@ -218,7 +219,7 @@ public class PedidoServiceImpl implements PedidoService {
                                     pEvaluacion.setFechaEvaluacion(LocalDateTime.now());
                                     pEvaluacion.setComentarios(evaluacion.getComentarios());
                                 }
-                                pEvaluacion.setResultado(evaluacion.getResultado());
+                                pEvaluacion.setResultado(StringUtils.capitalize(evaluacion.getResultado()));
 
                                 pedidoEvaluadorRepository.save(pEvaluacion);
                             });
@@ -235,7 +236,7 @@ public class PedidoServiceImpl implements PedidoService {
                                     .filter(pEvaluacion ->  Objects.equals(pEvaluacion.getUsuario().getId(), usuario.getId()) )
                                     .forEach(pEvaluacion -> {
                                         pEvaluacion.setFechaEvaluacion(LocalDateTime.now());
-                                        pEvaluacion.setResultado(evaluacion.getResultado());
+                                        pEvaluacion.setResultado(StringUtils.capitalize(evaluacion.getResultado()));
                                         pEvaluacion.setComentarios(evaluacion.getComentarios());
 
                                         pedidoEvaluadorRepository.save(pEvaluacion);

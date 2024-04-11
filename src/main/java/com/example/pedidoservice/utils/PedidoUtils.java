@@ -14,6 +14,7 @@ public class PedidoUtils {
     public static final List<Integer> GRUPO_EVALUADORES_01 = Arrays.asList(1, 2, 3);
     public static final List<Integer> GRUPO_EVALUADORES_02 = Arrays.asList(4, 5);;
     public static final List<Integer> GRUPO_EVALUADORES_03 = Arrays.asList(6, 7);;
+    public static final List<String>  RESULTADOS_PEDIDO = Arrays.asList("Aprobado", "Desaprobado", "aprobado", "desaprobado");
 
     public static double redondeoBanquero(double valor) {
         BigDecimal bd = new BigDecimal(valor);
@@ -32,6 +33,10 @@ public class PedidoUtils {
             }
         }
         return result;
+    }
+
+    public static boolean esResultadoValido(String resultado) {
+        return RESULTADOS_PEDIDO.contains(resultado);
     }
 
 }

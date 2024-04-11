@@ -1,5 +1,6 @@
 package com.example.pedidoservice.controller;
 
+import com.example.pedidoservice.error.exceptions.InvalidInputException;
 import com.example.pedidoservice.model.dto.EvaluacionPedidoDto;
 import com.example.pedidoservice.model.dto.PedidoCreateDto;
 import com.example.pedidoservice.model.dto.PedidoDto;
@@ -7,6 +8,9 @@ import com.example.pedidoservice.model.dto.PedidoPendienteEvaluacionDto;
 import com.example.pedidoservice.model.dto.mapper.PedidoMapper;
 import com.example.pedidoservice.model.entity.Pedido;
 import com.example.pedidoservice.service.PedidoService;
+import com.example.pedidoservice.utils.PedidoUtils;
+import jakarta.validation.Valid;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +29,7 @@ public class PedidoController {
             consumes = "application/json",
             produces = "application/json"
     )
-    public ResponseEntity<PedidoDto> crearPedido(@RequestBody PedidoCreateDto body) {
+    public ResponseEntity<PedidoDto> crearPedido(@Valid @RequestBody PedidoCreateDto body) {
         Pedido pedido = this.pedidoService.crearPedido(body);
         PedidoDto data = this.pedidoMapper.pedidoToPedidoDto(pedido);
 
@@ -59,6 +63,10 @@ public class PedidoController {
             produces = "application/json"
     )
     public ResponseEntity<PedidoDto> evaluarPedido(@PathVariable Integer pedidoId, @RequestParam Integer usuarioId, @RequestBody EvaluacionPedidoDto body) {
+        if (!PedidoUtils.esResultadoValido(body.getResultado())) {
+            throw new InvalidInputException("Valor no válido para resultado");
+        }
+
         Pedido pedido = this.pedidoService.evaluarPedido(pedidoId, usuarioId, body);
         PedidoDto data = this.pedidoMapper.pedidoToPedidoDto(pedido);
 
