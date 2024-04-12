@@ -1,4 +1,9 @@
 spring.application.name: pedido-service
+spring.application.api-version: v1
+server:
+  port: 8080
+  servlet:
+    context-path: "/${spring.application.api-version}"
 
 spring:
   datasource:
@@ -13,3 +18,69 @@ spring:
     defer-datasource-initialization: true
   h2:
     console.enabled: true
+
+springdoc:
+  swagger-ui.path: /openapi/swagger-ui.html
+  api-docs.path: /openapi/v3/api-docs
+
+api:
+  common:
+    version: 1.0.0
+    title: Pedidos API
+    description: REST API para la gestión de pedidos...
+    termsOfService: MY TERMS OF SERVICE
+    license: MY LICENSE
+    licenseUrl: MY LICENSE URL
+
+    externalDocDesc: MY WIKI PAGE
+    externalDocUrl: MY WIKI URL
+    contact:
+      name: NAME OF CONTACT
+      url: URL TO CONTACT
+      email: contact@mail.com
+
+  responseCodes:
+    ok.description: OK
+    badRequest.description: Bad Request, formato inválido en la petición. Ver mensaje de respuesta para más información
+    notFound.description: Not found, no existe la entidad con el ID especificado
+    unprocessableEntity.description: Unprocessable entity, los parámetros de entrada provocaron que el procesamiento fallara. Ver mensaje de respuesta para más información
+
+  pedido-controller:
+    crear-pedido:
+      description: Crea un pedido
+      notes: |
+        # Respuesta esperada
+        Información del pedido creado
+
+        # Errores esperados
+        1. Si se ingresa valores inválidos, se espera error **400 - Bad Request**
+        2. Si no existe la entidad asociada al pedido, se espera error **404 - Not Found**
+        3. Si los parámetros de entrada provocan que no pueda procesarse la petición, se espera error **422 - Unprocessable Entity**
+    preparar-evaluacion-pedido:
+      description: Cambia el estado de un pedido a pendiente de evaluación
+      notes: |
+        # Respuesta esperada
+        Información del pedido con el estado actualizado
+        
+        # Errores esperados
+        1. Si el pedido no tiene el estado 'BORRADOR', se espera error **400 - Bad Request**
+        2. Si no existe el pedido para el id ingresado, se espera error **404 - Not Found**
+        3. Si los parámetros de entrada provocan que no pueda procesarse la petición, se espera error **422 - Unprocessable Entity**
+    listar-pendientes-evaluacion:
+      description: Lista los pedidos pendientes de evaluación filtrando por el usuario evaluador
+      notes: |
+        # Respuesta esperada
+        Lista de los pedidos pendientes de evaluación
+        
+        # Errores esperados
+        1. Si no existe el usuario para el id ingresado, se espera error **404 - Not Found**
+    evaluar-pedido:
+      description: Evalúa el pedido
+      notes: |
+        # Respuesta esperada
+        Información del pedido con el resultado de la evaluación
+        
+        # Errores esperados
+        1. Si se ingresa valores inválidos, se espera error **400 - Bad Request**
+        2. Si no existe el pedido o usuario para los correspondientes ids ingresados, se espera error **404 - Not Found**
+        3. Si los parámetros de entrada provocan que no pueda procesarse la petición, se espera error **422 - Unprocessable Entity**

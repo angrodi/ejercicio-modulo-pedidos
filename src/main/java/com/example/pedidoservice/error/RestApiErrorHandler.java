@@ -9,9 +9,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 @RestControllerAdvice
 public class RestApiErrorHandler {
@@ -19,26 +19,26 @@ public class RestApiErrorHandler {
     @ExceptionHandler({ InvalidInputException.class })
     public ResponseEntity<ApiError> handleInvalidInputException(HttpServletRequest request, Exception ex, Locale locale) {
         ApiError error = new ApiError();
-        error.setEstado(HttpStatus.BAD_REQUEST);
-        error.setMensaje(ex.getMessage());
+        error.setStatus(HttpStatus.BAD_REQUEST);
+        error.setMessage(ex.getMessage());
 
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({ NoEstadoBorradorException.class, NoEstadoPendienteException.class })
     public ResponseEntity<ApiError> handleInvalidEstadoPedidoException(HttpServletRequest request, Exception ex, Locale locale) {
         ApiError error = new ApiError();
-        error.setEstado(HttpStatus.INTERNAL_SERVER_ERROR);
-        error.setMensaje(ex.getMessage());
+        error.setStatus(HttpStatus.UNPROCESSABLE_ENTITY);
+        error.setMessage(ex.getMessage());
 
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @ExceptionHandler({ NotFoundException.class })
     public ResponseEntity<ApiError> handleNotFoundException(HttpServletRequest request, Exception ex, Locale locale) {
         ApiError error = new ApiError();
-        error.setEstado(HttpStatus.NOT_FOUND);
-        error.setMensaje(ex.getMessage());
+        error.setStatus(HttpStatus.NOT_FOUND);
+        error.setMessage(ex.getMessage());
 
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
@@ -46,26 +46,29 @@ public class RestApiErrorHandler {
     @ExceptionHandler({ OutOfStockException.class })
     public ResponseEntity<ApiError> handleOutOfStockException(HttpServletRequest request, Exception ex, Locale locale) {
         ApiError error = new ApiError();
-        error.setEstado(HttpStatus.INTERNAL_SERVER_ERROR);
-        error.setMensaje(ex.getMessage());
+        error.setStatus(HttpStatus.UNPROCESSABLE_ENTITY);
+        error.setMessage(ex.getMessage());
 
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @ExceptionHandler({ MethodArgumentNotValidException.class })
-    public ResponseEntity<ApiValidationErrors> handleValidationsException(HttpServletRequest request, MethodArgumentNotValidException ex, Locale locale) {
-        ApiValidationErrors error = new ApiValidationErrors();
+    public ResponseEntity<ApiError> handleValidationsException(HttpServletRequest request, MethodArgumentNotValidException ex, Locale locale) {
+        ApiError error = new ApiError();
 
-        Map<String, String> errors = new HashMap<>();
+        List<ValidationError> errors = new ArrayList<>();
         ex.getBindingResult().getAllErrors().forEach((err) -> {
             String fieldName = ((FieldError) err).getField();
             String errorMessage = err.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
+
+            ValidationError validationError = new ValidationError(fieldName, errorMessage);
+            errors.add(validationError);
         });
 
-        error.setEstado(HttpStatus.BAD_REQUEST);
-        error.setErrors(errors);
+        error.setStatus(HttpStatus.BAD_REQUEST);
+        error.setMessage("Validación fallida");
+        error.setDetails(errors);
 
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 }

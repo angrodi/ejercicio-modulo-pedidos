@@ -1,6 +1,7 @@
 package com.example.pedidoservice.model.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,6 +31,7 @@ public class PedidoCreateDto {
     private Integer idCliente;
 
     @NotNull
+    @NotEmpty
     private List<PedidoItemCreateDto> items;
 
 }
